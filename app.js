@@ -1,21 +1,25 @@
 const path = require('path');
+
 const express = require('express');
 const bodyParser = require('body-parser');
 
-const adminRoutes = require('./routes/admin');
+const adminData = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
 
 const app = express();
+
+app.set('view engine', 'ejs');
+app.set('views', 'views');
 
 app.use(bodyParser.urlencoded({extended: false}));
 
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/favicon.ico', (req, res)=> res.sendStatus(204));
-app.use('/admin', adminRoutes);
+app.use('/admin', adminData.routes);
 app.use(shopRoutes);
 
 app.use((req, res, next) => {
-    res.status(404).sendFile(path.join(__dirname, 'views', '404Error.html'));
+    res.status(404).render('404Error', {pageTitle: 'Page Not Found!', path: ''});
 })
 app.listen(3000);
