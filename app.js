@@ -4,9 +4,11 @@ const express = require('express');
 const bodyParser = require('body-parser');
 
 const adminRoutes = require('./routes/admin');
-// const shopRoutes = require('./routes/shop');
+const shopRoutes = require('./routes/shop');
 
 const errorController = require('./controllers/error');
+
+const User = require('./models/user');
 
 const mongo = require('./util/database');
 
@@ -19,13 +21,22 @@ app.use(bodyParser.urlencoded({extended: false}));
 
 app.use(express.static(path.join(__dirname, 'public')));
 
+app.use((req, res, next) => {
+    User.findById('669ea718c5ee685880a4bc9e')
+    .then(user => {
+        req.user = new User(user.name, user.email, user.cart, user._id);
+        next();
+    })
+    .catch(err => console.log(err));
+})
 
 app.get('/favicon.ico', (req, res)=> res.sendStatus(204));
 app.use('/admin', adminRoutes);
-// app.use(shopRoutes);
+app.use(shopRoutes);
 
 app.use(errorController.get404);
 
 mongo.mongoConnect(() => {
+
     app.listen(3000);
 })
