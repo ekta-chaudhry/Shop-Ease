@@ -8,7 +8,7 @@ exports.getAddProduct = (req, res, next) => {
 }
 
 exports.getProducts = (req, res, next) => {
-    Product.fetchAll()
+    Product.find()
     .then(products=> {
         res.render('admin/products', {prods: products, pageTitle: 'Admin Products', path: '/admin/products'});
     })
@@ -42,8 +42,16 @@ exports.postEditProduct = (req, res, next) => {
     const price = req.body.price;
     const desc = req.body.description;
     
-    Product.updateProduct(prodId, title, imageUrl, price, desc)
+    Product.findById(prodId)
+    .then(product => {
+        product.title = title;
+        product.price = price;
+        product.imageUrl = imageUrl;
+        product.description = desc;
+        return product.save();
+    })
     .then(result => {
+        console.log('Updated product with id: ', prodId);
         res.redirect('/admin/products');
     })
     .catch(err => console.log(err));
@@ -51,8 +59,9 @@ exports.postEditProduct = (req, res, next) => {
 
 exports.postDeleteProduct = (req, res, next) => {
     const prodId = req.body.productId;
-    Product.deleteProduct(prodId)
+    Product.findByIdAndDelete(prodId)
     .then(result => {
+        console.log('Deleted product with id: ', prodId);
         res.redirect('/admin/products');
     })
     .catch(err => console.log(err));
@@ -64,11 +73,17 @@ exports.postAddProduct = (req, res, next) => {
     const imageUrl = req.body.imageUrl;
     const description = req.body.description;
     const price = req.body.price;
-    const userId = req.user._id;
-    const product = new Product(title, price, description, imageUrl, userId);
+    const product = new Product({
+        title: title, 
+        price: price, 
+        description: description, 
+        imageUrl: imageUrl,
+        userId: req.user._id
+    });
+
     product.save()
     .then(result => {
-        console.log('Created Product');
+        console.log('Created new product having id: ', result._id);
         res.redirect('/admin/products');
     })
     .catch(err => console.log(err));
