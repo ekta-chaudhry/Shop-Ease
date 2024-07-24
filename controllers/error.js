@@ -1,3 +1,3 @@
 exports.get404 = (req, res, next) => {
-    res.status(404).render('404Error', {pageTitle: 'Page Not Found!', path: ''});
+    res.status(404).render('404Error', {isAuthenticated: req.session.isLoggedIn, pageTitle: 'Page Not Found!', path: ''});
 }

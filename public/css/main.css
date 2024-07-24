@@ -41,7 +41,9 @@ form {
 
 .main-header__nav {
   height: 100%;
-  display: none;
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
   align-items: center;
 }
 
@@ -60,6 +62,12 @@ form {
 .main-header__item a {
   text-decoration: none;
   color: white;
+}
+
+.logout-button {
+  font-family: 'Open Sans', sans-serif;
+  color: white;
+  background-color: #00695c;
 }
 
 .main-header__item a:hover,
