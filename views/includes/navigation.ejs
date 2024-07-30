@@ -31,10 +31,14 @@
                 <li class="main-header__item">
                     <a class="<%= path === '/login' ? 'active' : '' %>" href="/login">Login</a>
                 </li>
-                <% } else{%>
                 <li class="main-header__item">
-                    <a class="<%= path === '/logout' ? 'active' : '' %>" href="/logout">Logout</a>
+                    <a class="<%= path === '/signup' ? 'active' : '' %>" href="/signup">Signup</a>
                 </li>
+                <% } else{%>
+                <form action="/logout" method="POST">
+                    <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+                     <button type="submit">Logout</button>
+                </form>
                 <%}%>
             </ul>
     </nav>
@@ -63,6 +67,10 @@
                         <a class="<%= path === '/admin/products' ? 'active' : '' %>" href="/admin/products">Admin Products
                         </a>
                     </li>
+                    <form action="/logout" method="POST">
+                        <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+                         <button type="submit">Logout</button>
+                    </form>
                 <%}%>
             </ul>
             <ul class="main-header__item-list">
@@ -70,9 +78,9 @@
                     <a class="<%= path === '/login' ? 'active' : '' %>" href="/login">Login</a>
                 </li>
                 <li class="main-header__item">
-                <form action="/logout" method="POST">
-                     <button type="submit">Logout</button>
-                </form>
+                    <a class="<%= path === '/signup' ? 'active' : '' %>" href="/signup">Signup</a>
+                </li>
+                <li class="main-header__item">
             </li>
             </ul>
 </nav>
