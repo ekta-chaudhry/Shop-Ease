@@ -1,5 +1,7 @@
 const Product = require('../models/product');
 
+const {check, validationResult} = require('express-validator');
+
 exports.getAddProduct = (req, res, next) => {
     if(!req.session.isLoggedIn) {
         return res.redirect('/login');
@@ -7,7 +9,10 @@ exports.getAddProduct = (req, res, next) => {
     res.render('admin/edit-product', 
         {pageTitle: 'Add Product', 
         path: '/admin/add-product',
-        editing: false});
+        editing: false,
+        hasErrors: false,
+        errorMessage: null,
+        validationErrors: []});
 }
 
 exports.getProducts = (req, res, next) => {
@@ -32,7 +37,10 @@ exports.getEditProduct = (req, res, next) => {
             pageTitle: 'Edit Product', 
             path: '/admin/edit-product',
             editing: editMode,
-            product: product
+            hasErrors: false,
+            product: product,
+            errorMessage: null,
+            validationErrors: []
         });
     })
     .catch(err => console.log(err));
@@ -44,6 +52,26 @@ exports.postEditProduct = (req, res, next) => {
     const imageUrl = req.body.imageUrl;
     const price = req.body.price;
     const desc = req.body.description;
+    const error = validationResult(req);
+
+    if(!error.isEmpty()) {
+        console.log(error.array());
+        return res.status(422).render('admin/edit-product', 
+            {pageTitle: 'Edit Product', 
+            path: '/admin/edit-product',
+            editing: true,
+            hasErrors: true,
+            product: {
+                _id: prodId,
+                title: title,
+                price: price,
+                imageUrl: imageUrl,
+                description: desc
+            },
+            errorMessage: error.array()[0].msg,
+            validationErrors: error.array()});
+    }
+
     
     Product.findById(prodId)
     .then(product => {
@@ -79,6 +107,24 @@ exports.postAddProduct = (req, res, next) => {
     const imageUrl = req.body.imageUrl;
     const description = req.body.description;
     const price = req.body.price;
+    const error = validationResult(req);
+    if(!error.isEmpty()) {
+        console.log(error.array());
+        return res.status(422).render('admin/edit-product', 
+            {pageTitle: 'Add Product', 
+            path: '/admin/add-product',
+            editing: false,
+            hasErrors: true,
+            product: {
+                title: title,
+                price: price,
+                imageUrl: imageUrl,
+                description: description
+            },
+            errorMessage: error.array()[0].msg,
+            validationErrors: error.array()});
+    }
+
     const product = new Product({
         title: title, 
         price: price, 
