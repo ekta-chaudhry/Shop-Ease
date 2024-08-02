@@ -24,6 +24,6 @@ router.post('/add-product',
         body('description').isLength({min: 5}).withMessage('Description should have at least 5 characters!').trim()
     ],
     isAuth, adminController.postAddProduct);
-router.post('/delete-product', adminController.postDeleteProduct);
+router.delete('/product/:productId', isAuth, adminController.deleteProduct);
 
 module.exports = router;
