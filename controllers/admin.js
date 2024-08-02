@@ -120,9 +120,25 @@ exports.postDeleteProduct = (req, res, next) => {
 
 exports.postAddProduct = (req, res, next) => {
     const title = req.body.title;
-    const imageUrl = req.body.imageUrl;
+    const image = req.file;
     const description = req.body.description;
     const price = req.body.price;
+
+    if(!image) {
+        return res.status(422).render('admin/edit-product', 
+            {pageTitle: 'Add Product', 
+            path: '/admin/add-product',
+            editing: false,
+            hasErrors: true,
+            product: {
+                title: title,
+                price: price,
+                description: description
+            },
+            errorMessage: 'Attached file is not an image',
+            validationErrors: []
+        });
+    }
     const error = validationResult(req);
     if(!error.isEmpty()) {
         console.log(error.array());
@@ -134,7 +150,6 @@ exports.postAddProduct = (req, res, next) => {
             product: {
                 title: title,
                 price: price,
-                imageUrl: imageUrl,
                 description: description
             },
             errorMessage: error.array()[0].msg,
@@ -145,7 +160,6 @@ exports.postAddProduct = (req, res, next) => {
         title: title, 
         price: price, 
         description: description, 
-        imageUrl: imageUrl,
         userId: req.user._id
     });
 

@@ -13,7 +13,6 @@ router.get('/edit-product/:productId', isAuth, adminController.getEditProduct);
 router.post('/edit-product', 
     [
         body('title').isLength({min: 3}).withMessage('Title should have at least 3 characters!').trim(),
-        body('imageUrl').isURL().withMessage('Invalid URL!'),
         body('price').isFloat().withMessage('Invalid price entered!'),
         body('description').isLength({min: 5}).withMessage('Description should have at least 5 characters!').trim()
     ],
@@ -21,7 +20,6 @@ router.post('/edit-product',
 router.post('/add-product', 
     [
         body('title').isLength({min: 3}).withMessage('Title should have at least 3 characters!').trim(),
-        body('imageUrl').isURL().withMessage('Invalid URL!'),
         body('price').isFloat().withMessage('Invalid price entered!'),
         body('description').isLength({min: 5}).withMessage('Description should have at least 5 characters!').trim()
     ],
