@@ -63,7 +63,7 @@ app.use(session(
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(multer({storage: fileStorage, fileFilter: fileFilter}).single('image'));
 app.use(express.static(path.join(__dirname, 'public')));
-
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
 app.use(csrfProtection);
 app.use(flash());
@@ -86,7 +86,6 @@ app.use((req, res, next) => {
 })
 
 app.use((req, res, next) => {
-    console.log('within locals setting middleware');
     res.locals.isAuthenticated = req.session.isLoggedIn;
     res.locals.csrfToken = req.csrfToken();
     next();

@@ -90,6 +90,11 @@ form {
   border-color: red;
   background: rgb(250, 38, 9);
 }
+
+.order-title {
+  color: darkcyan;
+  font-weight: bold;
+}
 .mobile-nav {
   width: 30rem;
   height: 100vh;

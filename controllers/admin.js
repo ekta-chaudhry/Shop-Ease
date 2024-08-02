@@ -1,4 +1,5 @@
 const Product = require('../models/product');
+const deleteFile = require('../util/file');
 
 const {check, validationResult} = require('express-validator');
 
@@ -57,7 +58,7 @@ exports.getEditProduct = (req, res, next) => {
 exports.postEditProduct = (req, res, next) => {
     const prodId = req.body.productId;
     const title = req.body.title;
-    const imageUrl = req.body.imageUrl;
+    const image = req.file;
     const price = req.body.price;
     const desc = req.body.description;
     const error = validationResult(req);
@@ -73,7 +74,6 @@ exports.postEditProduct = (req, res, next) => {
                 _id: prodId,
                 title: title,
                 price: price,
-                imageUrl: imageUrl,
                 description: desc
             },
             errorMessage: error.array()[0].msg,
@@ -88,7 +88,10 @@ exports.postEditProduct = (req, res, next) => {
         }
         product.title = title;
         product.price = price;
-        product.imageUrl = imageUrl;
+        if(image) {
+            deleteFile(product.imageUrl);
+            product.imageUrl = image.path;
+        }
         product.description = desc;
         return product.save()
         .then(result => {
@@ -105,16 +108,25 @@ exports.postEditProduct = (req, res, next) => {
 
 exports.postDeleteProduct = (req, res, next) => {
     const prodId = req.body.productId;
-    Product.deleteOne({_id: prodId, userId: req.user._id})
-    .then(result => {
-        console.log('Deleted product with id: ', prodId);
-        res.redirect('/admin/products');
+    Product.findById(prodId)
+    .then(product => {
+        if(!product) {
+            return next(new Error('Product not found!'));
+        }
+        deleteFile(product.imageUrl);
+        return Product.deleteOne({_id: prodId, userId: req.user._id})
+        .then(result => {
+            console.log('Deleted product with id: ', prodId);
+            res.redirect('/admin/products');
+        })
+        .catch(err => {
+            const error = new Error(err);
+            error.httpStatusCode = 500;
+            return next(error);
+        });
+
     })
-    .catch(err => {
-        const error = new Error(err);
-        error.httpStatusCode = 500;
-        return next(error);
-    });
+    .catch(err => {return next(err)});
 
 }
 
@@ -156,9 +168,11 @@ exports.postAddProduct = (req, res, next) => {
             validationErrors: error.array()});
     }
 
+    const imageUrl = image.path;
     const product = new Product({
         title: title, 
         price: price, 
+        imageUrl: imageUrl,
         description: description, 
         userId: req.user._id
     });
