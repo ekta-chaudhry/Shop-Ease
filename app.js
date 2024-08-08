@@ -14,6 +14,7 @@ const shopRoutes = require('./routes/shop');
 const authRoutes = require('./routes/auth')
 const errorController = require('./controllers/error');
 const User = require('./models/user');
+const SendgridKey = require('./models/sendgrid-key');
 
 const MONGODB_URI = 'mongodb+srv://ekta00sea:Passworderror404@cluster0.7vsduk6.mongodb.net/shop?w=majority&appName=Cluster0';
 const app = express();
@@ -106,6 +107,6 @@ app.use((error, req, res, next) => {
 mongoose.connect(MONGODB_URI)
 .then(result => {
     console.log('Connected!');
-        app.listen(3000);
+    app.listen(3000);
 })
 .catch(err => console.log(err));

@@ -1,4 +1,5 @@
 const User = require('../models/user');
+const SendgridKey = require('../models/sendgrid-key');
 
 const bcrypt = require('bcryptjs');
 const nodemailer = require('nodemailer');
@@ -6,11 +7,16 @@ const sendgridTransport = require('nodemailer-sendgrid-transport');
 const crypto = require('crypto');
 const {query, validationResult} = require('express-validator');
 
-const transporter = nodemailer.createTransport(sendgridTransport({
-    auth: {
-        api_key: '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'
-    }
-}));
+let transporter;
+
+SendgridKey.findOne()
+.then(keyData => {
+    transporter = nodemailer.createTransport(sendgridTransport({
+        auth: {
+            api_key: keyData.apiKey
+        }
+    }));
+})
 
 exports.getLogin = (req, res, next) => {
     let message = req.flash('error');
