@@ -1,6 +1,7 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
-const keySchema = new Schema({
+
+const keysSchema = new Schema({
     sendgridKey: {
         type: String,
         required: true
@@ -9,6 +10,6 @@ const keySchema = new Schema({
         type: String,
         required: true
     }
-})
+});
 
-module.exports = mongoose.model('Key', keySchema);
+module.exports = mongoose.model('Key', keysSchema);

@@ -14,9 +14,8 @@ const shopRoutes = require('./routes/shop');
 const authRoutes = require('./routes/auth')
 const errorController = require('./controllers/error');
 const User = require('./models/user');
-const Key = require('./models/keys');
 
-const MONGODB_URI = 'mongodb+srv://ekta00sea:Passworderror404@cluster0.7vsduk6.mongodb.net/shop?w=majority&appName=Cluster0';
+const MONGODB_URI = `mongodb+srv://ekta00sea:Passworderror404@cluster0.7vsduk6.mongodb.net/shop?w=majority&appName=Cluster0`;
 const app = express();
 app.get('/favicon.ico', (req, res)=> res.sendStatus(204));
 

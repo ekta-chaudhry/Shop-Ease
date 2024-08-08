@@ -3,15 +3,16 @@ const path = require('path');
 
 const Product = require('../models/product');
 const Order = require('../models/order');
-const Key = require('../models/keys');
+const Keys = require('../models/keys');
 
 const pdfDocument = require('pdfkit');
 
 let stripe;
-Key.findOne()
+Keys.findOne()
 .then(keyData => {
     stripe = require('stripe')(keyData.stripeKey);
 })
+
 const ITEMS_PER_PAGE = 1;
 
 exports.getProducts = (req, res, next) => {

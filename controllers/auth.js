@@ -1,15 +1,14 @@
 const User = require('../models/user');
-const Key = require('../models/keys');
 
 const bcrypt = require('bcryptjs');
 const nodemailer = require('nodemailer');
 const sendgridTransport = require('nodemailer-sendgrid-transport');
 const crypto = require('crypto');
 const {query, validationResult} = require('express-validator');
+const Keys = require('../models/keys');
 
 let transporter;
-
-Key.findOne()
+Keys.findOne()
 .then(keyData => {
     transporter = nodemailer.createTransport(sendgridTransport({
         auth: {
@@ -17,6 +16,8 @@ Key.findOne()
         }
     }));
 })
+
+
 
 exports.getLogin = (req, res, next) => {
     let message = req.flash('error');
