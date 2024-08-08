@@ -1,7 +1,11 @@
 const mongoose = require('mongoose');
 const Schema = mongoose.Schema;
 const keySchema = new Schema({
-    apiKey: {
+    sendgridKey: {
+        type: String,
+        required: true
+    },
+    stripeKey: {
         type: String,
         required: true
     }

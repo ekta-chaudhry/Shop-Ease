@@ -3,9 +3,15 @@ const path = require('path');
 
 const Product = require('../models/product');
 const Order = require('../models/order');
+const Key = require('../models/keys');
 
 const pdfDocument = require('pdfkit');
 
+let stripe;
+Key.findOne()
+.then(keyData => {
+    stripe = require('stripe')(keyData.stripeKey);
+})
 const ITEMS_PER_PAGE = 1;
 
 exports.getProducts = (req, res, next) => {
@@ -85,7 +91,7 @@ exports.getProduct = (req, res, next) => {
 exports.getCart = (req, res, next) => {
     req.user.populate('cart.items.productId')
     .then(user => {
-        products = user.cart.items;
+        const products = user.cart.items;
         res.render('shop/cart', {path: '/cart', pageTitle: 'Your Cart', products: products});
     })
     .catch(err => {
@@ -124,7 +130,7 @@ exports.postDeleteProduct = (req, res, next) => {
     });
 }
 
-exports.postOrder = (req, res, next) => {
+exports.getCheckoutSuccess = (req, res, next) => {
     req.user.populate('cart.items.productId')
     .then(user => {
         const products = user.cart.items.map(i => {
@@ -209,4 +215,50 @@ exports.getInvoice = (req, res, next) => {
         
     })
     .catch(err => next(err));
+}
+
+exports.getCheckout = (req, res, next) => {
+    let products;
+    let total = 0;
+    req.user.populate('cart.items.productId')
+    .then(user => {
+        products = user.cart.items;
+        total = 0;
+        products.forEach(p => {
+            total += p.quantity * p.productId.price;
+        });
+
+        const lineItems = products.map((product) => ({
+            price_data: {
+              currency: 'usd',
+              product_data: {
+                name: product.productId.title,
+                description: product.productId.description,
+              },
+              unit_amount: product.productId.price * 100, // Price in cents
+            },
+            quantity: product.quantity,
+          }));
+        return stripe.checkout.sessions.create({
+            payment_method_types: ['card'],
+            line_items: lineItems,
+            mode: 'payment',
+            success_url: req.protocol + '://' + req.get('host') + '/checkout/success',
+            cancel_url: req.protocol + '://' + req.get('host') + '/checkout/cancel'
+        });
+    })
+    .then(session => {
+        res.render('shop/checkout', 
+            {path: '/checkout', 
+            pageTitle: 'Checkout', 
+            products: products, 
+            totalPrice: total,
+            sessionId: session.id});
+    })
+    .catch(err => {
+        const error = new Error(err);
+        console.log(error);
+        error.httpStatusCode = 500;
+        return next(error);
+    });
 }
