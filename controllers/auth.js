@@ -68,8 +68,8 @@ exports.postSignup = (req, res, next) => {
         return transporter.sendMail({
             to: email,
             from: 'ekta0.0sea@gmail.com',
-            subject: 'Signup succeeded!',
-            html: '<h1>You successfully signed up!</h1>'
+            subject: 'Signup on ShopEase successful!',
+            html: '<h1>You"ve successfully signed up on ShopEase. Enjoy shopping!</h1>'
         });
     })
     .catch(err => {
