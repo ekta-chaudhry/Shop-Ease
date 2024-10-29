@@ -59,7 +59,7 @@ app.use(session(
         resave: false, 
         saveUninitialized: true,
         store: store,
-        cookie: { secure: false }
+        cookie: { secure: true }
     }));
 
 app.use(bodyParser.urlencoded({extended: false}));
@@ -69,6 +69,11 @@ app.use('/images', express.static(path.join(__dirname, 'images')));
 
 const csrfProtection = csrf({ cookie: true});
 app.use(csrfProtection);
+app.use((req, res, next) => {
+    res.locals.isAuthenticated = req.session.isLoggedIn;
+    res.locals.csrfToken = req.csrfToken();
+    next();
+})
 app.use(flash());
 
 app.use((req, res, next) => {
@@ -86,12 +91,6 @@ app.use((req, res, next) => {
     .catch(err => {
         next(new Error(err));
     });
-})
-
-app.use((req, res, next) => {
-    res.locals.isAuthenticated = req.session.isLoggedIn;
-    res.locals.csrfToken = req.csrfToken();
-    next();
 })
 
 app.use('/admin', adminRoutes);
