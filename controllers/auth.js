@@ -5,19 +5,12 @@ const nodemailer = require('nodemailer');
 const sendgridTransport = require('nodemailer-sendgrid-transport');
 const crypto = require('crypto');
 const {query, validationResult} = require('express-validator');
-const Keys = require('../models/keys');
 
-let transporter;
-Keys.findOne()
-.then(keyData => {
-    transporter = nodemailer.createTransport(sendgridTransport({
-        auth: {
-            api_key: keyData.sendgridKey
-        }
-    }));
-})
-
-
+const transporter = nodemailer.createTransport(sendgridTransport({
+    auth: {
+        api_key: process.env.SENDGRID_KEY
+    }
+}));
 
 exports.getLogin = (req, res, next) => {
     let message = req.flash('error');
