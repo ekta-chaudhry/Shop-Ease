@@ -17,7 +17,7 @@ const authRoutes = require('./routes/auth')
 const errorController = require('./controllers/error');
 const User = require('./models/user');
 
-const PORT = process.env.PORT || 3000;
+const PORT = parseInt(process.env.PORT, 10) || 3000;
 
 const app = express();
 app.get('/favicon.ico', (req, res)=> res.sendStatus(204));
