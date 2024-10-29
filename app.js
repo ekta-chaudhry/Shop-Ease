@@ -2,6 +2,7 @@ const path = require('path');
 
 const express = require('express');
 const bodyParser = require('body-parser');
+const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
 const session = require('express-session');
 const MongoDBStore = require('connect-mongodb-session')(session);
@@ -51,7 +52,7 @@ const fileFilter = (req, file, cb) => {
         cb(null, false);
     }
 }
-
+app.use(cookieParser);
 app.use(session(
     {
         secret: process.env.SESSION_SECRET, 
