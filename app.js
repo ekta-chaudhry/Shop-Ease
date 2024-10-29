@@ -52,7 +52,7 @@ const fileFilter = (req, file, cb) => {
         cb(null, false);
     }
 }
-app.use(cookieParser);
+app.use(cookieParser());
 app.use(session(
     {
         secret: process.env.SESSION_SECRET, 
