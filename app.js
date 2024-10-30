@@ -19,6 +19,7 @@ const User = require('./models/user');
 const PORT = parseInt(process.env.PORT, 10) || 3000;
 
 const app = express();
+app.set('trust proxy', 1);
 app.use(bodyParser.urlencoded({extended: false}));
 
 app.get('/favicon.ico', (req, res)=> res.sendStatus(204));
@@ -61,7 +62,7 @@ app.use(session(
         resave: false, 
         saveUninitialized: true,
         store: store,
-        cookie: { secure: process.env.NODE_ENV === 'production' }
+        cookie: { secure: true }
 }));
 
 const { csrfSynchronisedProtection } = csrfSync({
