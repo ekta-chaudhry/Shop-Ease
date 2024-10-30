@@ -1,7 +1,7 @@
 const fs = require('fs');
 
 const deleteFile = (filePath) => {
-    fs.unlink(filePath, (err) => {
+    fs.unlinkSync(filePath, (err) => {
         if(err) {
             throw (err);
         }

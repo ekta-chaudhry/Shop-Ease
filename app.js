@@ -37,9 +37,8 @@ const fileStorage = multer.diskStorage({
         cb(null, 'images');
     },
     filename: (req, file, cb) => {
-        const date = new Date();
-        const dateString = date.toDateString();
-        cb(null, dateString + '-' + file.originalname);
+        const date = Date.now();
+        cb(null, date + '-' + file.originalname);
     }
 });
 
@@ -79,13 +78,11 @@ const { csrfSynchronisedProtection } = csrfSync({
 app.use(csrfSynchronisedProtection);
 
 app.use((req, res, next) => {
-    console.log("I've reached the res.locals setting middleware");
     res.locals.isAuthenticated = req.session.isLoggedIn;
     if(!req.session.csrfToken) {
         req.session.csrfToken = req.csrfToken();
     }
     res.locals.csrfToken = req.session.csrfToken; 
-    console.log(res.locals.csrfToken);
     next();
 })
 app.use((req, res, next) => {
@@ -106,9 +103,6 @@ app.use((req, res, next) => {
 })
 
 app.use(flash());
-app.get('/test-csrf', (req, res) => {
-    res.render('test-view');
-});
 
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
