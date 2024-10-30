@@ -251,6 +251,21 @@ form {
   color: white;
 }
 
+#logout-btn{
+  color: white;
+  background-color: #00695c;
+  border-radius: 0px;
+  width: 70px;
+  height: 40px;
+  border: none;
+  outline: none;
+  font-size: medium;
+}
+#logout-btn:hover{
+  cursor:pointer;
+  color:#ffeb3b;
+}
+
 @media (min-width: 768px) {
   .main-header__nav {
     display: flex;

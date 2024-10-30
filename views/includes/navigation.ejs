@@ -37,7 +37,7 @@
                 <% } else{%>
                 <form action="/logout" method="POST">
                     <input type="hidden" name="CSRFToken" value="<%=csrfToken%>">
-                     <button type="submit">Logout</button>
+                     <button id="logout-btn" type="submit">Logout</button>
                 </form>
                 <%}%>
             </ul>
