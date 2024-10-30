@@ -36,7 +36,7 @@
                 </li>
                 <% } else{%>
                 <form action="/logout" method="POST">
-                    <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+                    <input type="hidden" name="CSRFToken" value="<%=csrfToken%>">
                      <button type="submit">Logout</button>
                 </form>
                 <%}%>
@@ -68,7 +68,7 @@
                         </a>
                     </li>
                     <form action="/logout" method="POST">
-                        <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+                        <input type="hidden" name="CSRFToken" value="<%=csrfToken%>">
                          <button type="submit">Logout</button>
                     </form>
                 <%}%>

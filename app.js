@@ -2,11 +2,10 @@ const path = require('path');
 
 const express = require('express');
 const bodyParser = require('body-parser');
-const cookieParser = require('cookie-parser');
 const mongoose = require('mongoose');
 const session = require('express-session');
+const { csrfSync } = require("csrf-sync");
 const MongoDBStore = require('connect-mongodb-session')(session);
-const csrf = require('csurf');
 const flash = require('connect-flash');
 const multer = require('multer');
 require('dotenv').config();
@@ -20,6 +19,8 @@ const User = require('./models/user');
 const PORT = parseInt(process.env.PORT, 10) || 3000;
 
 const app = express();
+app.use(bodyParser.urlencoded({extended: false}));
+
 app.get('/favicon.ico', (req, res)=> res.sendStatus(204));
 
 const store = new MongoDBStore({
@@ -52,30 +53,41 @@ const fileFilter = (req, file, cb) => {
         cb(null, false);
     }
 }
-app.use(cookieParser());
+app.use(multer({storage: fileStorage, fileFilter: fileFilter}).single('image'));
+app.use(express.static(path.join(__dirname, 'public')));
+app.use('/images', express.static(path.join(__dirname, 'images')));
 app.use(session(
     {
         secret: process.env.SESSION_SECRET, 
         resave: false, 
         saveUninitialized: true,
         store: store,
-        cookie: { secure: true }
-    }));
+        cookie: { secure: process.env.NODE_ENV === 'production' }
+}));
 
-app.use(bodyParser.urlencoded({extended: false}));
-app.use(multer({storage: fileStorage, fileFilter: fileFilter}).single('image'));
-app.use(express.static(path.join(__dirname, 'public')));
-app.use('/images', express.static(path.join(__dirname, 'images')));
+const { csrfSynchronisedProtection } = csrfSync({
+    getTokenFromRequest: (req) => {
+      if(req.is("multipart/form-data")) {
+        return req.body["CSRFToken"]
+      }
+      if (req.is("application/x-www-form-urlencoded")) {
+        return req.body["CSRFToken"];
+      }
+      return req.headers["x-csrf-token"];
+    },
+});
+app.use(csrfSynchronisedProtection);
 
-const csrfProtection = csrf({ cookie: true});
-app.use(csrfProtection);
 app.use((req, res, next) => {
+    console.log("I've reached the res.locals setting middleware");
     res.locals.isAuthenticated = req.session.isLoggedIn;
-    res.locals.csrfToken = req.csrfToken();
+    if(!req.session.csrfToken) {
+        req.session.csrfToken = req.csrfToken();
+    }
+    res.locals.csrfToken = req.session.csrfToken; 
+    console.log(res.locals.csrfToken);
     next();
 })
-app.use(flash());
-
 app.use((req, res, next) => {
     if(!req.session.user) {
         return next();
@@ -93,6 +105,11 @@ app.use((req, res, next) => {
     });
 })
 
+app.use(flash());
+app.get('/test-csrf', (req, res) => {
+    res.render('test-view');
+});
+
 app.use('/admin', adminRoutes);
 app.use(shopRoutes);
 app.use(authRoutes);
@@ -102,6 +119,7 @@ app.use(errorController.get404);
 
 
 app.use((error, req, res, next) => {
+    console.log(error);
     res.status(500).render('500', {isAuthenticated: req.session.isLoggedIn, pageTitle: 'Error!', path: '/500'});
 });
 

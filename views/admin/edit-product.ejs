@@ -4,14 +4,14 @@
 </head>
 
 <body>
-   <%- include('../includes/navigation.ejs') %>
+   <%- include('../includes/navigation.ejs', { csrfToken: csrfToken }) %>
 
     <main>
         <% if(errorMessage) { %>
             <div class="user-message user-message--error"><%= errorMessage %></div>
         <%}%>
         <form class="product-form" action="/admin/<%if(editing){%>edit-product<%}else{%>add-product<%}%>" method="POST" enctype="multipart/form-data">
-            <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+            <input type="hidden" name="CSRFToken" value="<%=csrfToken%>">
             <div class="form-control">
                 <label for="title">Title</label>
                 <input class="<%=validationErrors.find(e => e.path === 'title') ? 'invalid' : ''%>" type="text" name="title" id="title" value="<% if (editing || hasErrors) {%><%=product.title%><%} %>" >

@@ -7,6 +7,7 @@ exports.getAddProduct = (req, res, next) => {
     if(!req.session.isLoggedIn) {
         return res.redirect('/login');
     }
+    console.log("Hi, I print csrfToken inside getAddProduct: " + res.locals.csrfToken);
     res.render('admin/edit-product', 
         {pageTitle: 'Add Product', 
         path: '/admin/add-product',

@@ -69,7 +69,7 @@ exports.postSignup = (req, res, next) => {
             to: email,
             from: 'ekta0.0sea@gmail.com',
             subject: 'Signup on ShopEase successful!',
-            html: '<h1>You"ve successfully signed up on ShopEase. Enjoy shopping!</h1>'
+            html: "<h1>You've successfully signed up on ShopEase. <br>Enjoy shopping!</h1>"
         });
     })
     .catch(err => {
@@ -113,7 +113,7 @@ exports.postLogin = (req, res, next) => {
 exports.postLogout = (req, res, next) => {
     req.session.destroy((err) => {
         res.redirect('/');
-    })
+    });
 }
 
 exports.getReset = (req, res, next) => {

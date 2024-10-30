@@ -2,7 +2,7 @@
     </head>
 
     <body>
-        <%- include('../includes/navigation.ejs') %>
+        <%- include('../includes/navigation.ejs', { csrfToken: csrfToken }) %>
         <main class="centered">
             <h1><%= product.title %></h1>
             <div class="image">
@@ -12,7 +12,7 @@
             <p><%= product.description %></p>
             <% if(isAuthenticated) { %>
                 <form action="/cart" method="POST">
-                    <input type="hidden" name="_csrf" value="<%=csrfToken%>">
+                    <input type="hidden" name="CSRFToken" value="<%=csrfToken%>">
                     <button class="btn" type="submit">Add to Cart</button>
                     <input type="hidden" name="productId" value="<%= product._id %>">
                 </form>
